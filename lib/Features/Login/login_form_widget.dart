@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:public_emergency_app/Features/Response%20Screen/emergencies_screen.dart';
+import 'package:public_emergency_app/Features/ResponseScreen/emergencies_screen.dart';
 
 import '../User/Controllers/login_controller.dart';
 import '../User/Screens/Forget Password/forget_password.dart';
@@ -18,7 +18,6 @@ class _LoginFormState extends State<LoginForm> {
   bool _isObscure = true;
   final formkey = GlobalKey<FormState>();
 
-
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -33,7 +32,7 @@ class _LoginFormState extends State<LoginForm> {
               controller: controller.emailController,
               validator: (value) {
                 bool _isEmailValid = RegExp(
-                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                     .hasMatch(value!);
                 if (!_isEmailValid) {
                   return 'Invalid email.';
@@ -46,11 +45,10 @@ class _LoginFormState extends State<LoginForm> {
                 labelText: "Email",
                 hintText: "Email",
                 border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
               ),
             ),
             const SizedBox(height: 30 - 10),
-
             TextFormField(
               controller: controller.passwordController,
               validator: (value) {
@@ -64,10 +62,6 @@ class _LoginFormState extends State<LoginForm> {
                 return null;
               },
               obscureText: _isObscure,
-
-
-
-
               decoration: InputDecoration(
                 suffixIcon: IconButton(
                     icon: Icon(
@@ -77,14 +71,11 @@ class _LoginFormState extends State<LoginForm> {
                         _isObscure = !_isObscure;
                       });
                     }),
-
-
-
                 prefixIcon: const Icon(Icons.fingerprint),
                 labelText: "Password",
                 hintText: "Password",
                 border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
               ),
             ),
             const SizedBox(height: 30 - 20),
@@ -95,7 +86,8 @@ class _LoginFormState extends State<LoginForm> {
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
-                              side: const BorderSide(color: Colors.transparent)))),
+                              side: const BorderSide(
+                                  color: Colors.transparent)))),
                   onPressed: () {
                     Get.to(() => const ForgetPassword());
                   },
@@ -120,14 +112,13 @@ class _LoginFormState extends State<LoginForm> {
                         controller.emailController.text.toString(),
                         controller.passwordController.text.trim());
                   }
-
-
-
                 },
                 child: Text("Log in".toUpperCase()),
               ),
             ),
-            SizedBox(height: 10,),
+            SizedBox(
+              height: 10,
+            ),
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -138,19 +129,14 @@ class _LoginFormState extends State<LoginForm> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20))),
                 onPressed: () async {
-                Get.to(const EmergenciesScreen());
+                  Get.to(const EmergenciesScreen());
                 },
                 child: Text("ADMIN SCREEN".toUpperCase()),
               ),
             )
-
           ],
         ),
       ),
     );
   }
 }
-
-
-
-

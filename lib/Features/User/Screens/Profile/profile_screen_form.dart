@@ -3,7 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../Emergency Contacts/add_contacts.dart';
+import '../../../EmergencyContacts/add_contacts.dart';
 import '../../Controllers/session_controller.dart';
 
 class ProfileFormWidget extends StatefulWidget {
@@ -22,7 +22,7 @@ class _ProfileFormWidgetState extends State<ProfileFormWidget> {
   Widget build(BuildContext context) {
     final _formkey = GlobalKey<FormState>();
     String userEmail;
-    final user =FirebaseAuth.instance.currentUser;
+    final user = FirebaseAuth.instance.currentUser;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 30 - 10),
@@ -33,10 +33,9 @@ class _ProfileFormWidgetState extends State<ProfileFormWidget> {
             if (snapshot.hasData) {
               Map<dynamic, dynamic> map = snapshot.data.snapshot.value ?? {};
               final nameController =
-              TextEditingController(text: map['UserName']);
-              final phoneController =
-              TextEditingController(text: map['Phone']);
-              userEmail=map["email"].toString();
+                  TextEditingController(text: map['UserName']);
+              final phoneController = TextEditingController(text: map['Phone']);
+              userEmail = map["email"].toString();
 
               return Form(
                 key: _formkey,
@@ -80,8 +79,8 @@ class _ProfileFormWidgetState extends State<ProfileFormWidget> {
 
                       validator: (value) {
                         bool _isEmailValid =
-                        RegExp(r'^(?:[+0][1-9])?[0-9]{8,15}$')
-                            .hasMatch(value!);
+                            RegExp(r'^(?:[+0][1-9])?[0-9]{8,15}$')
+                                .hasMatch(value!);
                         if (!_isEmailValid) {
                           return 'Invalid phone number';
                         }
@@ -102,7 +101,7 @@ class _ProfileFormWidgetState extends State<ProfileFormWidget> {
                       focusNode: new AlwaysDisabledFocusNode(),
                       validator: (value) {
                         bool _isEmailValid = RegExp(
-                            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                             .hasMatch(value!);
                         if (!_isEmailValid) {
                           return 'Invalid email.';
@@ -118,8 +117,6 @@ class _ProfileFormWidgetState extends State<ProfileFormWidget> {
                       ),
                     ),
                     const SizedBox(height: 30 - 20),
-
-
                     SizedBox(
                       width: double.infinity,
                       height: 50,
@@ -135,10 +132,6 @@ class _ProfileFormWidgetState extends State<ProfileFormWidget> {
                           //   phoneController.text!.trim(),
                           // );
 
-
-
-
-
                           if ((_formkey.currentState)!.validate()) {
                             updateprofile(nameController.text.trim(),
                                 phoneController.text.trim());
@@ -148,8 +141,6 @@ class _ProfileFormWidgetState extends State<ProfileFormWidget> {
                                 backgroundColor: Colors.green,
                                 colorText: Colors.white,
                                 duration: const Duration(seconds: 2));
-
-
                           }
                         },
                         child: Text("Update".toUpperCase()),
@@ -174,7 +165,6 @@ class _ProfileFormWidgetState extends State<ProfileFormWidget> {
                         child: Text("Emergency Contacts".toUpperCase()),
                       ),
                     ),
-
                   ],
                 ),
               );
@@ -197,8 +187,6 @@ class _ProfileFormWidgetState extends State<ProfileFormWidget> {
     });
   }
 }
-
-
 
 class AlwaysDisabledFocusNode extends FocusNode {
   @override

@@ -9,7 +9,7 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:permission_handler/permission_handler.dart';
-import '../../Emergency Contacts/emergency_contacts_controller.dart';
+import '../../EmergencyContacts/emergency_contacts_controller.dart';
 
 class messageController extends GetxController {
   static messageController get instance => Get.find();
@@ -85,6 +85,8 @@ class messageController extends GetxController {
           timestamp: DateTime.now(),
           accuracy: 0,
           altitude: 0,
+          headingAccuracy: 0,
+          altitudeAccuracy: 0,
           heading: 0,
           speed: 0,
           speedAccuracy: 0);
@@ -103,6 +105,8 @@ class messageController extends GetxController {
         timestamp: DateTime.now(),
         accuracy: 0,
         altitude: 0,
+        altitudeAccuracy: 0,
+        headingAccuracy: 0,
         heading: 0,
         speed: 0,
         speedAccuracy: 0);

@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:public_emergency_app/Features/FireFighter/firefighter_dashboard.dart';
-import 'package:public_emergency_app/Features/Response%20Screen/emergencies_screen.dart';
+import 'package:public_emergency_app/Features/ResponseScreen/emergencies_screen.dart';
 import 'package:public_emergency_app/Features/User/Screens/DashBoard/user_dashboard.dart';
 import 'package:public_emergency_app/Features/User/Screens/LiveStreaming/sos_page.dart';
 import 'package:public_emergency_app/Features/User/Screens/Profile/profile_screen.dart';
@@ -11,13 +11,13 @@ import 'package:public_emergency_app/Features/User/Screens/location_getter_sende
 import '../../../User.dart';
 import '../../Ambulance/ambulance_dashboard.dart';
 import '../../Police/police_dashboard.dart';
+
 class NavBar extends StatefulWidget {
   const NavBar({Key? key}) : super(key: key);
 
   @override
   State<NavBar> createState() => _NavBarState();
 }
-
 
 class _NavBarState extends State<NavBar> {
   int currentIndex = 1;
@@ -31,7 +31,6 @@ class _NavBarState extends State<NavBar> {
   @override
   void initState() {
     super.initState();
-
   }
 
   @override
