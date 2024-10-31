@@ -64,6 +64,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                   fontSize: 20,
                   color: Colors.black,
                 ),
+                textAlign: TextAlign.justify,
               ),
             )
           ],
@@ -84,21 +85,21 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
           buildPage(
               color: Colors.white,
               url: "assets/Ambulance.png",
-              title: 'Emergency Patrol',
+              title: 'Alerta de Emergencia',
               subtitle:
-                  'Our app provides a platform for quick response services from police, ambulance, and firefighters.'),
+                  'Con solo unos "clics", envíe una alerta de emergencia simultánea a su serenazgo, a la policía o los bomberos.'),
           buildPage(
               color: Colors.white,
               url: 'assets/Quick.png',
-              title: 'Easy and Fast Response',
+              title: 'Respuesta Rápida',
               subtitle:
-                  'Our app allows you to quickly send out an emergency request with just a few taps, and our responders will be alerted to your location within seconds.'),
+                  'En segundos nuestro serenazgo recibirá su localización geográfica para asistirlo de manera rápida e inmediata.'),
           buildPage(
               color: Colors.white,
-              url: 'assets/Choose.png',
-              title: 'Choose Your Responder',
+              url: 'assets/airport.png',
+              title: 'Retorno Seguro',
               subtitle:
-                  'As a responder, you can choose your area of expertise and set your availability status. This allows citizens to see which responders are available and respond to emergency requests accordingly.'),
+                  'Retorne del aeropuerto con tranquilidad a su domicilio, programe su horario de llegada a su domicilio para asignarle un serenazgo.'),
         ],
       ),
       bottomSheet: lastPage
