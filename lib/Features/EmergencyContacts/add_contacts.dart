@@ -1,4 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/contact.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
 import 'package:public_emergency_app/Features/User/Screens/Profile/profile_screen.dart';
 import 'package:public_emergency_app/Features/User/Screens/bottom_nav.dart';
@@ -17,8 +22,27 @@ class _add_contactState extends State<add_contact> {
   @override
   void initState() {
     super.initState();
-    contactController.loadData();
-    _loadContacts();
+    // contactController.loadData();
+    // _loadContacts();
+    WidgetsBinding.instance.addPostFrameCallback((t) {
+      fetchAllContacts();
+    });
+  }
+
+  List<Contact> contacts = [];
+
+  fetchAllContacts() async {
+    if (await FlutterContacts.requestPermission()) {
+      // Get all contacts (lightly fetched)
+      contacts = await FlutterContacts.getContacts(
+        withProperties: true,
+        withAccounts: true,
+        withGroups: true,
+        withPhoto: true,
+        withThumbnail: true,
+      );
+    }
+    setState(() {});
   }
 
   Future<void> _loadContacts() async {
@@ -59,6 +83,11 @@ class _add_contactState extends State<add_contact> {
   static const String _key4 = 'contact4';
   static const String _key5 = 'contact5';
 
+  List<Contact> addedContacts = [];
+
+  DatabaseReference ref = FirebaseDatabase.instance.ref('Users');
+  User user = FirebaseAuth.instance.currentUser!;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,7 +101,7 @@ class _add_contactState extends State<add_contact> {
           ),
         ),
         bottom: PreferredSize(
-            preferredSize: Size.fromHeight(100),
+            preferredSize: const Size.fromHeight(100),
             child: Container(
               padding: const EdgeInsets.only(bottom: 15),
               child: Column(
@@ -82,7 +111,7 @@ class _add_contactState extends State<add_contact> {
                     children: [
                       Center(
                         child: SizedBox.fromSize(
-                          size: Size(56, 56),
+                          size: const Size(56, 56),
                           child: ClipOval(
                             child: Material(
                               color: Colors.lightBlueAccent,
@@ -91,9 +120,14 @@ class _add_contactState extends State<add_contact> {
                                 onTap: () {
                                   Get.to(() => NavBar());
                                 },
-                                child: Column(
+                                child: const Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
+                                    Icon(
+                                      Icons.arrow_back,
+                                      color: Colors.white,
+                                      size: 30,
+                                    ),
                                     Icon(
                                       Icons.arrow_back,
                                       color: Colors.white,
@@ -117,9 +151,9 @@ class _add_contactState extends State<add_contact> {
                   ),
                   Container(
                     margin: const EdgeInsets.only(top: 8),
-                    child: Column(
+                    child: const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
                           "Emergency Contacts",
                           style: TextStyle(
@@ -135,145 +169,127 @@ class _add_contactState extends State<add_contact> {
             )),
       ),
       body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                "Add Emergency Contacts here",
-                style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.blue,
-                    fontWeight: FontWeight.bold),
-              ),
-              SizedBox(
-                height: Get.height * 0.04,
-              ),
-              SizedBox(
-                width: 300,
-                height: 100,
-                child: TextFormField(
-                  controller: contact1controller,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(15.0),
-                      ),
-                    ),
-                    hintText: 'Enter First Contact',
-                    labelText: 'Emergency Contact 1',
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: 300,
-                height: 100,
-                child: TextFormField(
-                  controller: contact2controller,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(15.0),
-                      ),
-                    ),
-                    hintText: 'Enter Second Contact',
-                    labelText: 'Emergency Contact 2',
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: 300,
-                height: 100,
-                child: TextFormField(
-                  controller: contact3controller,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(15.0),
-                      ),
-                    ),
-                    hintText: 'Enter Second Contact',
-                    labelText: 'Emergency Contact 3',
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: 300,
-                height: 100,
-                child: TextFormField(
-                  controller: contact4controller,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(15.0),
-                      ),
-                    ),
-                    hintText: 'Enter Second Contact',
-                    labelText: 'Emergency Contact 4',
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: 300,
-                height: 100,
-                child: TextFormField(
-                  controller: contact5controller,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(15.0),
-                      ),
-                    ),
-                    hintText: 'Enter Second Contact',
-                    labelText: 'Emergency Contact 5',
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Center(
-                child: SizedBox(
-                  height: 50,
-                  width: 200,
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        backgroundColor: Colors.blue,
-                        // foreground
-                      ),
-                      child: Text("Save"),
-                      onPressed: () async {
-                        var contact1 = contact1controller.text.toString();
-                        var contact2 = contact2controller.text.toString();
-                        var contact3 = contact3controller.text.toString();
-                        var contact4 = contact4controller.text.toString();
-                        var contact5 = contact5controller.text.toString();
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: Get.height * 0.02,
+            ),
+            const Text(
+              "Add Emergency Contacts here",
+              style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.blue,
+                  fontWeight: FontWeight.bold),
+            ),
+            SizedBox(
+              height: Get.height * 0.02,
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: contacts.length,
+                padding: const EdgeInsets.all(8),
+                itemBuilder: (context, index) {
+                  var _numbers = contacts[index].phones.toList();
 
-                        contactController.setData(
-                            contact1, contact2, contact3, contact4, contact5);
-                        contactController.loadData();
-
-                        //toast using Getx
-                        Get.snackbar(
-                          'Saved', 'Contact Saved Successfully',
-                          snackPosition: SnackPosition.BOTTOM,
-                          backgroundColor: Colors.green,
-                          colorText: Colors.white,
-                          duration: const Duration(seconds: 2),
-                          isDismissible: true,
-                          // dismissDirection: SnackDismissDirection.HORIZONTAL,
-                          forwardAnimationCurve: Curves.easeOutBack,
-                          reverseAnimationCurve: Curves.easeInBack,
-                        );
-                      }),
+                  return Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 4),
+                    child: ListTile(
+                      onTap: () {
+                        if (addedContacts.contains(contacts[index])) {
+                          addedContacts.remove(contacts[index]);
+                        } else {
+                          addedContacts.add(contacts[index]);
+                        }
+                        setState(() {});
+                      },
+                      leading: Icon(
+                        addedContacts.contains(contacts[index])
+                            ? CupertinoIcons.check_mark_circled_solid
+                            : CupertinoIcons.circle,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      tileColor: Colors.grey.shade200,
+                      style: ListTileStyle.drawer,
+                      title: Text(contacts[index].displayName),
+                      subtitle:
+                          Text(_numbers.isEmpty ? '' : _numbers.first.number),
+                    ),
+                  );
+                },
+              ),
+            ),
+            SizedBox(
+              height: Get.height * 0.02,
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.lightBlueAccent,
+                foregroundColor: Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 100, vertical: 10),
+                textStyle: const TextStyle(
+                  fontSize: 20,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              // Text(contact1),
-            ],
-          ),
+              onPressed: () async {
+                final snapshot = await ref.child('${user.uid}/contacts').get();
+                List<Contact> contactsList = [];
+
+                if (snapshot.exists && snapshot.value != null) {
+                  // Map the snapshot data to a list of Contact objects
+                  contactsList = (snapshot.value as List)
+                      .map((e) => Contact(
+                            displayName:
+                                e['name'] ?? '', // Ensure name is not null
+                            phones: [
+                              Phone(
+                                e['phone'] ?? '', // Ensure phone is not null
+                              ),
+                            ],
+                          ))
+                      .toList();
+                }
+
+                // Add the new contact to the list
+                contactsList.addAll(addedContacts);
+
+                // Update the contacts list in the database
+
+                ref.child(user.uid).update({
+                  "contacts": contactsList
+                      .map((e) => {
+                            "name": e.displayName,
+                            "phone":
+                                e.phones.isEmpty ? '' : e.phones.first.number,
+                          })
+                      .toList(),
+                });
+                Get.back();
+                //show success message and get back to the previous screen
+                Get.closeAllSnackbars();
+                await Get.closeCurrentSnackbar();
+
+                Get.snackbar(
+                  'Success',
+                  'Contacts added successfully',
+                  snackPosition: SnackPosition.BOTTOM,
+                  backgroundColor: Colors.green,
+                  colorText: Colors.white,
+                );
+              },
+              child: const Text("Save"),
+            ),
+            SizedBox(
+              height: Get.height * 0.02,
+            ),
+            // Text(contact1),
+          ],
         ),
       ),
     );

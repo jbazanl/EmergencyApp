@@ -16,6 +16,7 @@ class SignUpController extends GetxController {
   final password = TextEditingController();
   final fullName = TextEditingController();
   final phoneNo = TextEditingController();
+  final direction = TextEditingController();
 
   DatabaseReference ref = FirebaseDatabase.instance.ref('Users');
 
@@ -38,7 +39,7 @@ class SignUpController extends GetxController {
           'UserName': username,
           'Phone': Phone,
           'UserType': Usertype,
-
+          'Direction': direction.text,
         });
 
         Get.offAll(() => const VerifyEmailPage());

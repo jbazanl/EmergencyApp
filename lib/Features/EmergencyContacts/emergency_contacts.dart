@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/contact.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ContactListScreen extends StatefulWidget {
-
   const ContactListScreen({Key? key}) : super(key: key);
-
 
   @override
   _ContactListScreenState createState() => _ContactListScreenState();
@@ -21,7 +21,17 @@ class _ContactListScreenState extends State<ContactListScreen> {
   @override
   void initState() {
     super.initState();
-    _loadContacts();
+    // _loadContacts();
+    fetchAllContacts();
+  }
+
+  List<Contact> contacts = [];
+
+  fetchAllContacts() async {
+    if (await FlutterContacts.requestPermission()) {
+      // Get all contacts (lightly fetched)
+      contacts = await FlutterContacts.getContacts();
+    }
   }
 
   Future<void> _loadContacts() async {
@@ -81,64 +91,18 @@ class _ContactListScreenState extends State<ContactListScreen> {
               ),
             )),
       ),
-      body: ListView(
-      padding: const EdgeInsets.all(8),
-        children: [
-          const SizedBox(height: 30),
-          ListTile(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            tileColor: Colors.red.shade200,
-            style: ListTileStyle.drawer,
-            title: const Text('Contact 1'),
-            subtitle: Text(_contact1 ?? ''),
+      body: ListView.builder(
+        itemCount: contacts.length,
+        padding: const EdgeInsets.all(8),
+        itemBuilder: (context, index) => ListTile(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
           ),
-          const SizedBox(height: 10),
-
-          ListTile(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            tileColor: Colors.blueGrey.shade200,
-            style: ListTileStyle.drawer,
-            title: const Text('Contact 2'),
-            subtitle: Text(_contact2 ?? ''),
-          ),
-          const SizedBox(height: 10),
-
-          ListTile(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            tileColor: Colors.red.shade200,
-            style: ListTileStyle.drawer,
-            title: const Text('Contact 3'),
-            subtitle: Text(_contact3?? ''),
-          ),
-          const SizedBox(height: 10),
-
-          ListTile(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            tileColor: Colors.blueGrey.shade200,
-            style: ListTileStyle.drawer,
-            title: const Text('Contact 4'),
-            subtitle: Text(_contact4?? ''),
-          ),
-          const SizedBox(height: 10),
-
-          ListTile(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            tileColor: Colors.red.shade200,
-            style: ListTileStyle.drawer,
-            title: const Text('Contact 5'),
-            subtitle: Text(_contact5?? ''),
-          ),
-        ],
+          tileColor: Colors.red.shade200,
+          style: ListTileStyle.drawer,
+          title: Text(contacts[index].displayName),
+          subtitle: Text(contacts[index].phones.first.number),
+        ),
       ),
     );
   }

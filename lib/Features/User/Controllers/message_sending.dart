@@ -18,6 +18,8 @@ class messageController extends GetxController {
   String? _currentAddress;
   Position? _currentPosition;
   void _sendSMS(String message, List<String> recipents) async {
+    //todo: uncomment before git push
+
     for (var i = 0; i < recipents.length; i++) {
       String _result = await BackgroundSms.sendMessage(
               //add all phone numbers in phone number list

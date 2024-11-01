@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:google_places_flutter/google_places_flutter.dart';
+import 'package:google_places_flutter/model/place_type.dart';
+import 'package:google_places_flutter/model/prediction.dart';
 
 import '../../Controllers/signup_controller.dart';
-
 
 class SignUpFormWidget extends StatefulWidget {
   const SignUpFormWidget({super.key});
@@ -15,10 +17,12 @@ class SignUpFormWidget extends StatefulWidget {
 bool isChecked = false;
 bool newsletterSubscription = false;
 bool letterChecked = false;
-enum UserType { User, Police, FireFighter, Ambulance }
-var userType = UserType.User;
-class _SignUpFormWidgetState extends State<SignUpFormWidget> {
 
+enum UserType { User, Police, FireFighter, Ambulance }
+
+var userType = UserType.User;
+
+class _SignUpFormWidgetState extends State<SignUpFormWidget> {
   final controller = Get.put(SignUpController());
 
   // @override
@@ -60,7 +64,7 @@ class _SignUpFormWidgetState extends State<SignUpFormWidget> {
                 labelText: "Full Name",
                 hintText: "Full Name",
                 border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
               ),
             ),
             const SizedBox(height: 30 - 20),
@@ -68,7 +72,7 @@ class _SignUpFormWidgetState extends State<SignUpFormWidget> {
               controller: controller.email,
               validator: (value) {
                 bool _isEmailValid = RegExp(
-                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                     .hasMatch(value!);
                 if (!_isEmailValid) {
                   return 'Invalid email.';
@@ -76,11 +80,11 @@ class _SignUpFormWidgetState extends State<SignUpFormWidget> {
                 return null;
               },
               decoration: InputDecoration(
-                prefixIcon: Icon(Icons.email_outlined),
+                prefixIcon: const Icon(Icons.email_outlined),
                 labelText: "Email",
                 hintText: "Email",
                 border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
               ),
             ),
             const SizedBox(height: 30 - 20),
@@ -88,18 +92,18 @@ class _SignUpFormWidgetState extends State<SignUpFormWidget> {
               controller: controller.phoneNo,
               validator: (value) {
                 bool _isEmailValid =
-                RegExp(r'^(?:[+0][1-9])?[0-9]{8,15}$').hasMatch(value!);
+                    RegExp(r'^(?:[+0][1-9])?[0-9]{8,15}$').hasMatch(value!);
                 if (!_isEmailValid) {
                   return 'Invalid phone number';
                 }
                 return null;
               },
               decoration: InputDecoration(
-                prefixIcon: Icon(Icons.phone),
+                prefixIcon: const Icon(Icons.phone),
                 labelText: "Phone Number",
                 hintText: "Phone Number",
                 border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
               ),
             ),
             const SizedBox(height: 30 - 20),
@@ -120,51 +124,123 @@ class _SignUpFormWidgetState extends State<SignUpFormWidget> {
                 labelText: "Password",
                 hintText: "Password",
                 border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
               ),
             ),
             const SizedBox(height: 10),
+            //direction api text field
+            GooglePlaceAutoCompleteTextField(
+              textEditingController: controller.direction,
+
+              boxDecoration: BoxDecoration(
+                  border: null, borderRadius: BorderRadius.circular(20)),
+              googleAPIKey: "AIzaSyA8zsjcTFw4QbgPylMtbbIuZZ3d7J9FfJk",
+              inputDecoration: InputDecoration(
+                prefixIcon: const Icon(Icons.directions),
+                labelText: "Address Direction",
+                hintText: "Address Direction",
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+              ),
+              debounceTime: 800, // default 600 ms,
+              // optional by default null is set
+              isLatLngRequired:
+                  false, // if you required coordinates from place detail
+              getPlaceDetailWithLatLng: (Prediction prediction) {
+                // this method will return latlng with place detail
+                print("placeDetails" + prediction.lng.toString());
+              }, // this callback is called when isLatLngRequired is true
+              itemClick: (Prediction prediction) {
+                controller.direction.text = prediction.description!;
+                controller.direction.selection = TextSelection.fromPosition(
+                    TextPosition(offset: prediction.description!.length));
+              },
+              // if we want to make custom list item builder
+              itemBuilder: (context, index, Prediction prediction) {
+                return Container(
+                  padding: EdgeInsets.all(10),
+                  child: Row(
+                    children: [
+                      Icon(Icons.location_on),
+                      SizedBox(
+                        width: 7,
+                      ),
+                      Expanded(child: Text("${prediction.description ?? ""}"))
+                    ],
+                  ),
+                );
+              },
+              // if you want to add seperator between list items
+              seperatedBuilder: Divider(),
+              // want to show close icon
+              isCrossBtnShown: true,
+              // optional container padding
+              containerHorizontalPadding: 0,
+              // place type
+              placeType: PlaceType.geocode,
+            ),
             Column(
               children: [
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-
-                    Radio<UserType>(value: UserType.User, groupValue: userType, onChanged: (UserType? value) {
-                      setState(() { userType = value!; });
-                    },),
+                    Radio<UserType>(
+                      value: UserType.User,
+                      groupValue: userType,
+                      onChanged: (UserType? value) {
+                        setState(() {
+                          userType = value!;
+                        });
+                      },
+                    ),
                     const Text('User'),
-                    Radio<UserType>(value: UserType.Police, groupValue: userType, onChanged: (UserType? value) {
-                      setState(() { userType = value!; });
-                    },),
+                    Radio<UserType>(
+                      value: UserType.Police,
+                      groupValue: userType,
+                      onChanged: (UserType? value) {
+                        setState(() {
+                          userType = value!;
+                        });
+                      },
+                    ),
                     const Text('Police'),
                   ],
                 ),
-               Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.start,
-                 children: [
-                   Radio<UserType>(value: UserType.FireFighter, groupValue: userType, onChanged: (UserType? value) {
-                     setState(() { userType = value!; });
-                   },),
-                   const Text('Fire Fighter'),
-                   Radio<UserType>(value: UserType.Ambulance, groupValue: userType, onChanged: (UserType? value) {
-                     setState(() { userType = value!; });
-                   },),
-                   const Text('Ambulance'),
-                 ],
-               )
+                  children: [
+                    Radio<UserType>(
+                      value: UserType.FireFighter,
+                      groupValue: userType,
+                      onChanged: (UserType? value) {
+                        setState(() {
+                          userType = value!;
+                        });
+                      },
+                    ),
+                    const Text('Fire Fighter'),
+                    Radio<UserType>(
+                      value: UserType.Ambulance,
+                      groupValue: userType,
+                      onChanged: (UserType? value) {
+                        setState(() {
+                          userType = value!;
+                        });
+                      },
+                    ),
+                    const Text('Ambulance'),
+                  ],
+                )
               ],
             ),
-
             SizedBox(
               width: double.infinity,
               height: 50,
               child:
 
-              //SIGN UP BUTTON THAT WILL SHOW A DIALOG BOX FOR USER  FIRST TO AGREE UPON TERMS AND CONDITIONS, THEN WILL REGISTER
+                  //SIGN UP BUTTON THAT WILL SHOW A DIALOG BOX FOR USER  FIRST TO AGREE UPON TERMS AND CONDITIONS, THEN WILL REGISTER
 
-              ElevatedButton(
+                  ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
                     backgroundColor: Colors.lightBlueAccent,
@@ -177,10 +253,10 @@ class _SignUpFormWidgetState extends State<SignUpFormWidget> {
                         return StatefulBuilder(
                           builder: (context, setState) {
                             return AlertDialog(
-                                title:
-                                const Center(child: Text("Terms & Conditions")),
+                                title: const Center(
+                                    child: Text("Terms & Conditions")),
                                 insetPadding:
-                                const EdgeInsets.symmetric(horizontal: 20),
+                                    const EdgeInsets.symmetric(horizontal: 20),
                                 titleTextStyle: const TextStyle(
                                     color: Colors.lightBlueAccent,
                                     fontSize: 20,
@@ -189,10 +265,10 @@ class _SignUpFormWidgetState extends State<SignUpFormWidget> {
                                     borderRadius: BorderRadius.all(
                                         Radius.circular(15.0))),
                                 scrollable: true,
-                                content: Wrap(
+                                content: const Wrap(
                                   runAlignment: WrapAlignment.center,
                                   runSpacing: 10,
-                                  children: const [
+                                  children: [
                                     Text(
                                       "User Agreement",
                                       style: TextStyle(
@@ -221,7 +297,8 @@ class _SignUpFormWidgetState extends State<SignUpFormWidget> {
                                       Row(
                                         children: [
                                           Checkbox(
-                                              activeColor: Colors.lightBlueAccent,
+                                              activeColor:
+                                                  Colors.lightBlueAccent,
                                               checkColor: Colors.white,
                                               value: isChecked,
                                               onChanged: ((bool? value) {
@@ -237,62 +314,62 @@ class _SignUpFormWidgetState extends State<SignUpFormWidget> {
                                           )
                                         ],
                                       ),
-
                                       Center(
                                         child: ElevatedButton(
                                             style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors
-                                                    .lightBlueAccent,),
-
-
+                                              backgroundColor:
+                                                  Colors.lightBlueAccent,
+                                            ),
                                             onPressed: (() {
-                                                if(isChecked==false){
+                                              if (isChecked == false) {
                                                 //USED PACKAGE TO GENERATE THIS TOAST
-                                                Get.snackbar("Error", "Please agree to the terms and conditions",
-                                                    snackPosition: SnackPosition.BOTTOM,
+                                                Get.snackbar("Error",
+                                                    "Please agree to the terms and conditions",
+                                                    snackPosition:
+                                                        SnackPosition.BOTTOM,
                                                     backgroundColor: Colors.red,
                                                     colorText: Colors.white,
-                                                    duration: const Duration(seconds: 3));
-                                            }
-                                                else{
-                                                  Navigator.of(context)
-                                                      .pop(AlertDialog);
-                                                  if (_formkey.currentState!.validate()) {
-                                                    SignUpController.instance.signUp(
-                                                      controller.fullName.text.trim(),
-                                                      controller.email.text.trim(),
-                                                      controller.password.text.trim(),
-                                                      controller.phoneNo.text.trim(),
-                                                      userType.toString().split('.').last,
-                                                    );
-
-                                                  }
-
+                                                    duration: const Duration(
+                                                        seconds: 3));
+                                              } else {
+                                                Navigator.of(context)
+                                                    .pop(AlertDialog);
+                                                if (_formkey.currentState!
+                                                    .validate()) {
+                                                  SignUpController.instance
+                                                      .signUp(
+                                                    controller.fullName.text
+                                                        .trim(),
+                                                    controller.email.text
+                                                        .trim(),
+                                                    controller.password.text
+                                                        .trim(),
+                                                    controller.phoneNo.text
+                                                        .trim(),
+                                                    userType
+                                                        .toString()
+                                                        .split('.')
+                                                        .last,
+                                                  );
                                                 }
-
-
+                                              }
                                             }),
-
-
                                             child: const Text(
                                               "Continue",
                                               style: TextStyle(
                                                   color: Colors.white),
                                             )),
                                       ),
-
                                     ],
                                   )
                                 ]);
                           },
                         );
                       }));
-
                 },
                 child: Text("Sign Up".toUpperCase()),
               ),
             ),
-
           ],
         ),
       ),

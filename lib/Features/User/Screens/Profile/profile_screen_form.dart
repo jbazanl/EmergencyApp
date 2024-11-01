@@ -1,7 +1,12 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_places_flutter/google_places_flutter.dart';
+import 'package:google_places_flutter/model/place_type.dart';
+import 'package:google_places_flutter/model/prediction.dart';
 
 import '../../../EmergencyContacts/add_contacts.dart';
 import '../../Controllers/session_controller.dart';
@@ -17,12 +22,23 @@ class ProfileFormWidget extends StatefulWidget {
 
 class _ProfileFormWidgetState extends State<ProfileFormWidget> {
   DatabaseReference ref = FirebaseDatabase.instance.ref('Users');
+  final directionTxtController = TextEditingController();
+  final user = FirebaseAuth.instance.currentUser;
+
+  @override
+  void initState() {
+    ref.child(user!.uid.toString()).onValue.listen((event) {
+      Map<dynamic, dynamic> map = event.snapshot.value as Map<dynamic, dynamic>;
+      directionTxtController.text = map['Direction'] ?? '';
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     final _formkey = GlobalKey<FormState>();
+
     String userEmail;
-    final user = FirebaseAuth.instance.currentUser;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 30 - 10),
@@ -117,6 +133,62 @@ class _ProfileFormWidgetState extends State<ProfileFormWidget> {
                       ),
                     ),
                     const SizedBox(height: 30 - 20),
+                    //direction api text field
+                    GooglePlaceAutoCompleteTextField(
+                      textEditingController: directionTxtController,
+
+                      boxDecoration: BoxDecoration(
+                          border: null,
+                          borderRadius: BorderRadius.circular(20)),
+                      googleAPIKey: "AIzaSyA8zsjcTFw4QbgPylMtbbIuZZ3d7J9FfJk",
+                      inputDecoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.directions),
+                        labelText: "Address Direction",
+                        hintText: "Address Direction",
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                      ),
+                      debounceTime: 800, // default 600 ms,
+                      // optional by default null is set
+                      isLatLngRequired:
+                          false, // if you required coordinates from place detail
+                      getPlaceDetailWithLatLng: (Prediction prediction) {
+                        // this method will return latlng with place detail
+                        print("placeDetails" + prediction.lng.toString());
+                      }, // this callback is called when isLatLngRequired is true
+                      itemClick: (Prediction prediction) {
+                        directionTxtController.text = prediction.description!;
+                        directionTxtController.selection =
+                            TextSelection.fromPosition(TextPosition(
+                                offset: prediction.description!.length));
+                      },
+                      // if we want to make custom list item builder
+                      itemBuilder: (context, index, Prediction prediction) {
+                        return Container(
+                          padding: EdgeInsets.all(10),
+                          child: Row(
+                            children: [
+                              Icon(Icons.location_on),
+                              SizedBox(
+                                width: 7,
+                              ),
+                              Expanded(
+                                  child:
+                                      Text("${prediction.description ?? ""}"))
+                            ],
+                          ),
+                        );
+                      },
+                      // if you want to add seperator between list items
+                      seperatedBuilder: Divider(),
+                      // want to show close icon
+                      isCrossBtnShown: true,
+                      // optional container padding
+                      containerHorizontalPadding: 0,
+                      // place type
+                      placeType: PlaceType.geocode,
+                    ),
+                    const SizedBox(height: 30 - 20),
                     SizedBox(
                       width: double.infinity,
                       height: 50,
@@ -135,6 +207,8 @@ class _ProfileFormWidgetState extends State<ProfileFormWidget> {
                           if ((_formkey.currentState)!.validate()) {
                             updateprofile(nameController.text.trim(),
                                 phoneController.text.trim());
+                            directionTxtController.clear();
+                            directionTxtController.text = map['Direction'];
 
                             Get.snackbar("Save", "Profile Updated",
                                 snackPosition: SnackPosition.BOTTOM,
@@ -181,9 +255,10 @@ class _ProfileFormWidgetState extends State<ProfileFormWidget> {
 
   // this function to update user profile
   void updateprofile(String name, String phone) {
-    ref.child(SessionController().userid.toString()).update({
+    ref.child(user!.uid.toString()).update({
       'UserName': name,
       'Phone': phone,
+      'Direction': directionTxtController.text,
     });
   }
 }
